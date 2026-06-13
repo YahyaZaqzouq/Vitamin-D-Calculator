@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبة جرعة فيتامين D</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #e8f4fd 0%, #f0f8f0 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .container {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    padding: 36px 32px 28px;
+    max-width: 520px;
+    width: 100%;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .header .icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a5c96;
+    margin-bottom: 4px;
+  }
+
+  .header p {
+    font-size: 13px;
+    color: #7a8a9a;
+  }
+
+  .formula-box {
+    background: #f0f7ff;
+    border: 1.5px solid #b8d6f5;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    text-align: center;
+    font-size: 14px;
+    color: #1a5c96;
+    line-height: 1.9;
+  }
+
+  .formula-box strong {
+    display: block;
+    font-size: 15px;
+    color: #0e3f6e;
+    margin-top: 4px;
+  }
+
+  .inputs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .input-group label {
+    display: block;
+    font-size: 12px;
+    color: #5a6a7a;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .input-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #d0dce8;
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    color: #1a2a3a;
+    text-align: center;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  .input-group input:focus {
+    border-color: #1a5c96;
+    box-shadow: 0 0 0 3px rgba(26,92,150,0.10);
+  }
+
+  .input-group .unit {
+    font-size: 11px;
+    color: #9aabb8;
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  .result-main {
+    background: linear-gradient(135deg, #1a5c96 0%, #1a8a6e 100%);
+    border-radius: 16px;
+    padding: 22px 20px 18px;
+    text-align: center;
+    margin-bottom: 16px;
+    color: #fff;
+  }
+
+  .result-main .dose-label {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 6px;
+  }
+
+  .result-main .dose-value {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+
+  .result-main .dose-unit {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+
+  .result-main .status-badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.22);
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .mini-card {
+    background: #f5f9ff;
+    border: 1px solid #dde9f5;
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+
+  .mini-card .mc-label {
+    font-size: 12px;
+    color: #7a8a9a;
+    margin-bottom: 6px;
+  }
+
+  .mini-card .mc-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a5c96;
+  }
+
+  .mini-card .mc-unit {
+    font-size: 11px;
+    color: #9aabb8;
+    margin-top: 2px;
+  }
+
+  .level-bar-wrap {
+    margin-bottom: 18px;
+  }
+
+  .level-bar-wrap .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #7a8a9a;
+    margin-bottom: 6px;
+  }
+
+  .level-bar {
+    height: 10px;
+    background: #e0eaf5;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .level-bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.4s, background 0.4s;
+  }
+
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #9aabb8;
+    margin-top: 4px;
+  }
+
+  .warning-box {
+    background: #fffbea;
+    border: 1px solid #f5d76e;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #7a5c00;
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 11px;
+    color: #b0bcc8;
+  }
+
+  @media (max-width: 420px) {
+    .inputs-grid { grid-template-columns: 1fr; }
+    .result-grid { grid-template-columns: 1fr; }
+    .container { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="icon">☀️</div>
+    <h1>حاسبة جرعة فيتامين D</h1>
+    <p>أدخل بيانات المريض للحصول على الجرعة اليومية المناسبة</p>
+  </div>
+
+  <div class="formula-box">
+    المعادلة المستخدمة
+    <strong>(75 − مستوى الفيتامين) × الوزن × العمر ÷ 30</strong>
+  </div>
+
+  <div class="inputs-grid">
+    <div class="input-group">
+      <label>مستوى الفيتامين</label>
+      <input type="number" id="level" min="1" max="100" value="15" oninput="calc()">
+      <div class="unit">ng/mL</div>
+    </div>
+    <div class="input-group">
+      <label>الوزن</label>
+      <input type="number" id="weight" min="10" max="200" value="70" oninput="calc()">
+      <div class="unit">كجم</div>
+    </div>
+    <div class="input-group">
+      <label>العمر</label>
+      <input type="number" id="age" min="1" max="100" value="40" oninput="calc()">
+      <div class="unit">سنة</div>
+    </div>
+  </div>
+
+  <div class="result-main">
+    <div class="dose-label">الجرعة اليومية الموصى بها</div>
+    <div class="dose-value" id="dose">5,600</div>
+    <div class="dose-unit">وحدة دولية / يوم (IU/day)</div>
+    <div class="status-badge" id="status-badge">نقص</div>
+  </div>
+
+  <div class="result-grid">
+    <div class="mini-card">
+      <div class="mc-label">الجرعة الأسبوعية المكافئة</div>
+      <div class="mc-value" id="weekly">39,200</div>
+      <div class="mc-unit">IU / أسبوع</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-label">النقص عن المستوى المثالي</div>
+      <div class="mc-value" id="deficit">60</div>
+      <div class="mc-unit">ng/mL</div>
+    </div>
+  </div>
+
+  <div class="level-bar-wrap">
+    <div class="bar-label">
+      <span>مستوى المريض الحالي</span>
+      <span id="bar-pct">20%</span>
+    </div>
+    <div class="level-bar">
+      <div class="level-bar-fill" id="bar-fill" style="width:20%;background:#e24b4a"></div>
+    </div>
+    <div class="scale-labels">
+      <span>0</span>
+      <span>نقص حاد &lt;10</span>
+      <span>نقص &lt;20</span>
+      <span>قصور &lt;30</span>
+      <span>مثالي 75</span>
+    </div>
+  </div>
+
+  <div class="warning-box">
+    ⚠️ هذه الحاسبة للاسترشاد فقط — يُراجع الطبيب في حالات النقص الحاد أو أمراض الكلى والكبد
+  </div>
+
+  <div class="footer">
+    د.يحى زقزوق — صيدلية معاذ | منطقة جازان
+  </div>
+
+</div>
+
+<script>
+function calc() {
+  const level = parseFloat(document.getElementById('level').value) || 0;
+  const weight = parseFloat(document.getElementById('weight').value) || 0;
+  const age = parseFloat(document.getElementById('age').value) || 0;
+
+  if (level >= 75) {
+    document.getElementById('dose').textContent = 'لا حاجة';
+    document.getElementById('weekly').textContent = '—';
+    document.getElementById('deficit').textContent = '0';
+    document.getElementById('status-badge').textContent = 'مستوى ممتاز ✓';
+    document.getElementById('status-badge').style.background = 'rgba(255,255,255,0.3)';
+    setBar(level, '#1a8a6e');
+    return;
+  }
+
+  const dose = Math.round(((75 - level) * weight * age) / 30);
+  const weekly = Math.round(dose * 7);
+  const deficit = Math.round(75 - level);
+
+  document.getElementById('dose').textContent = dose.toLocaleString('ar-EG');
+  document.getElementById('weekly').textContent = weekly.toLocaleString('ar-EG');
+  document.getElementById('deficit').textContent = deficit;
+
+  let statusText = '';
+  let barColor = '';
+  if (level < 10) { statusText = 'نقص حاد جداً'; barColor = '#e24b4a'; }
+  else if (level < 20) { statusText = 'نقص'; barColor = '#e24b4a'; }
+  else if (level < 30) { statusText = 'قصور'; barColor = '#ef9f27'; }
+  else if (level < 50) { statusText = 'دون المثالي'; barColor = '#378add'; }
+  else { statusText = 'مقبول'; barColor = '#1a8a6e'; }
+
+  document.getElementById('status-badge').textContent = statusText;
+  setBar(level, barColor);
+}
+
+function setBar(level, color) {
+  const pct = Math.min(Math.round((level / 75) * 100), 100);
+  document.getElementById('bar-fill').style.width = pct + '%';
+  document.getElementById('bar-fill').style.background = color;
+  document.getElementById('bar-pct').textContent = pct + '%';
+}
+
+calc();
+</script>
+</body>
+</html>
